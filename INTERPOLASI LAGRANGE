@@ -1,0 +1,57 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Fungsi Interpolasi Lagrange
+def interpolasi_lagrange(x, y, xi):
+    """
+    Menghitung polinomial interpolasi Lagrange pada titik xi.
+    
+    :param x: daftar titik data x
+    :param y: daftar titik data y
+    :param xi: daftar atau skalar dari titik x untuk dievaluasi pada interpolasi
+    :return: nilai interpolasi pada xi
+    """
+    n = len(x)
+    yi = 0
+    
+    for i in range(n):
+        # Menghitung polinomial basis L_i(xi)
+        Li = 1
+        for j in range(n):
+            if i != j:
+                Li *= (xi - x[j]) / (x[i] - x[j])
+        # Tambahkan nilai L_i ke hasil interpolasi
+        yi += Li * y[i]
+        
+    return yi
+
+# Fungsi untuk menguji interpolasi Lagrange
+def uji_interpolasi_lagrange():
+    # Titik data dari tabel
+    x_data = [5, 10, 15, 20, 25, 30, 35, 40]
+    y_data = [40, 30, 25, 40, 18, 20, 22, 15]
+
+    # Rentang nilai x untuk interpolasi
+    x_interpolated = np.linspace(5, 40, 500)
+    
+    # Hitung nilai interpolasi y
+    y_interpolated = [interpolasi_lagrange(x_data, y_data, xi) for xi in x_interpolated]
+    
+    # Plot hasil interpolasi dan data asli
+    plt.figure(figsize=(10, 6))
+    plt.plot(x_interpolated, y_interpolated, label='Kurva Interpolasi Lagrange')
+    plt.scatter(x_data, y_data, color='red', label='Titik Data Asli')
+    plt.title('Interpolasi Lagrange: Hubungan Tegangan vs Waktu Patah')
+    plt.xlabel('Tegangan, x (kg/mm²)')
+    plt.ylabel('Waktu Patah, y (jam)')
+    plt.legend()
+    plt.grid(True)
+    plt.show()
+data_sets_baru = [
+    ([1, 2, 3, 4, 5], [1, 4, 9, 16, 25], 'Fungsi Kuadrat y = x^2'),
+    ([1, 2, 3, 4, 5], [1, 8, 27, 64, 125], 'Fungsi Kubik y = x^3'),
+    ([0, 0.5, 1, 1.5, 2], [0, 0.4794, 0.8415, 0.9975, 0.9093], 'Fungsi Sinus y = sin(x)')
+]
+
+# Menjalankan fungsi pengujian untuk verifikasi
+uji_interpolasi_lagrange()
