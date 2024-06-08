@@ -1,0 +1,53 @@
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Data yang diberikan
+x = np.array([5, 10, 15, 20, 25, 30, 35, 40])
+y = np.array([40, 30, 25, 40, 18, 20, 22, 15])
+
+def divided_diff(x, y):
+    """ Menghitung tabel divided difference """
+    n = len(y)
+    coef = np.zeros([n, n])
+    coef[:,0] = y
+
+    for j in range(1, n):
+        for i in range(n - j):
+            coef[i][j] = (coef[i + 1][j - 1] - coef[i][j - 1]) / (x[i + j] - x[i])
+    
+    return coef[0, :]
+
+def newton_poly(coef, x_data, x):
+    """ Mengevaluasi polinomial Newton pada titik x yang diberikan """
+    n = len(x_data) - 1 
+    p = coef[n]
+    for k in range(1, n + 1):
+        p = coef[n - k] + (x - x_data[n - k]) * p
+    return p
+
+# Menghitung koefisien divided difference
+coefficients = divided_diff(x, y)
+
+# Mendefinisikan rentang nilai x untuk plotting interpolasi
+x_range = np.linspace(min(x), max(x), 100)
+y_range = [newton_poly(coefficients, x, xi) for xi in x_range]
+
+# Plotting data asli dan polinomial interpolasi
+plt.figure(figsize=(10, 6))
+plt.plot(x, y, 'ro', label='Data points')
+plt.plot(x_range, y_range, 'b-', label='Newton Interpolated Polynomial')
+
+# Menguji interpolasi dengan beberapa nilai baru
+x_test = np.array([7, 12, 28])
+y_test = [newton_poly(coefficients, x, xi) for xi in x_test]
+
+# Plotting titik uji
+plt.plot(x_test, y_test, 'go', label='Test points')
+
+# Detail tambahan untuk plot
+plt.xlabel('Tegangan, x (kg/mm²)')
+plt.ylabel('Waktu patah, y (jam)')
+plt.legend()
+plt.title('Newton Interpolation of Tegangan vs Waktu patah')
+plt.grid(True)
+plt.show()
